@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1d3443" />
+    <meta name="description" content="Swift Schedules – a simple and modern shift schedule app." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Swift Schedules" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <title>Swift Schedules</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <div class="brand-line"><img class="brand-logo" src="icon.svg" alt="" aria-hidden="true" /><span class="brand-name">SWIFT <span>SCHEDULES</span></span></div>
+          <p class="eyebrow" id="appEyebrow">PLANLÆGNING</p>
+          <h1 id="appTitle">Vagtplaner</h1>
+          <p class="subtitle" id="appSubtitle">Lav, ret og gem et overskueligt skema på få minutter.</p>
+        </div>
+        <div class="header-actions">
+          <label class="language-picker">
+            <span class="sr-only" id="languageLabel">Sprog</span>
+            <select id="languageSelect" aria-labelledby="languageLabel"></select>
+          </label>
+          <button class="button button-secondary install-button" id="installButton" type="button" hidden>Installer app</button>
+          <button class="button button-primary" id="printButton" type="button">Print</button>
+        </div>
+      </header>
+
+      <section class="setup-card" aria-labelledby="setupHeading">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker" id="setupKicker">1. Opsætning</p>
+            <h2 id="setupHeading">Grundoplysninger</h2>
+          </div>
+          <span class="save-status" id="saveStatus" aria-live="polite">Gemt automatisk</span>
+        </div>
+
+        <div class="setup-grid">
+          <div class="calendar-picker">
+            <div class="calendar-picker-heading">
+              <span id="calendarLabel">Kalender</span>
+              <div class="calendar-navigation">
+                <button type="button" class="calendar-nav-button" id="calendarPrev" aria-label="Forrige måned">‹</button>
+                <strong id="calendarMonthLabel"></strong>
+                <button type="button" class="calendar-nav-button" id="calendarNext" aria-label="Næste måned">›</button>
+              </div>
+            </div>
+            <div id="monthCalendar" class="month-calendar" role="grid" aria-label="Kalender"></div>
+            <p class="calendar-help" id="calendarHelp"></p>
+          </div>
+        </div>
+
+        <div class="management-grid">
+          <div class="manage-panel">
+            <div class="manage-heading">
+              <div>
+                <h3 id="employeesHeading">Medarbejdere</h3>
+                <p id="employeesHint">Navnene bliver kolonner i skemaet.</p>
+              </div>
+              <button class="icon-button" id="addEmployeeButton" type="button" aria-label="Tilføj medarbejder">+</button>
+            </div>
+            <div id="employeesList" class="editable-list"></div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="toolbar-actions">
+            <button class="button button-quiet" id="sampleButton" type="button">Indsæt eksempeldata</button>
+            <button class="button button-quiet danger" id="clearButton" type="button">Ryd skemaet</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="schedule-card" aria-labelledby="scheduleHeading">
+        <div class="section-heading schedule-heading">
+          <div>
+            <p class="section-kicker" id="scheduleKicker">2. Skema</p>
+            <h2 id="scheduleHeading">Redigér direkte i tabellen</h2>
+          </div>
+          <div class="schedule-summary" id="scheduleSummary">0 felter udfyldt</div>
+        </div>
+        <div id="scheduleContainer" class="schedule-container"></div>
+      </section>
+
+      <footer class="app-footer">
+        <p id="footerText">Skemaet gemmes automatisk i denne browser. Excel-filen indeholder én fane pr. uge.</p>
+        <p class="print-hint" id="printHint">iPhone: Tryk Print / PDF og vælg derefter din AirPrint-printer.</p>
+      </footer>
+    </main>
+
+    <div class="edit-dialog" id="editDialog" hidden>
+      <div class="dialog-backdrop" data-close-edit="true"></div>
+      <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="editDialogTitle">
+        <button class="dialog-close" id="closeEditButton" type="button" aria-label="Luk redigering">×</button>
+        <p class="section-kicker" id="editKicker">Rediger felt</p>
+        <h2 id="editDialogTitle">Vagtfelt</h2>
+        <p class="dialog-current" id="editDialogCurrent">Vælg en mulighed</p>
+        <div class="edit-options" id="editOptions"></div>
+        <div class="custom-edit">
+          <label for="customValueInput" id="customLabel">Eget tal eller note</label>
+          <div class="custom-edit-row">
+            <input id="customValueInput" type="text" placeholder="Skriv fx 09, 12 eller en note" />
+            <button class="button button-primary" id="saveCustomButton" type="button">Gem</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- About & Terms Modal -->
+    <div class="edit-dialog" id="aboutDialog" hidden>
+      <div class="dialog-backdrop" data-close-about="true"></div>
+      <section class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="aboutDialogTitle">
+        <button class="dialog-close" id="closeAboutButton" type="button" aria-label="Luk">×</button>
+        <h2 id="aboutDialogTitle">Om Swift Schedules</h2>
+        <div style="margin-top: 15px; font-size: 0.9rem; line-height: 1.6; color: var(--muted);">
+          <p><strong>Swift Schedules</strong> er et effektivt værktøj til hurtig planlægning af vagter. Appen kører direkte i din browser, hvilket betyder, at dine data aldrig forlader din enhed.</p>
+
+          <h3 style="color: var(--navy); margin-top: 20px;">Privatlivspolitik (GDPR)</h3>
+          <p>Vi indsamler ingen personlige oplysninger. Alle navne og vagtplaner gemmes lokalt i din browsers <em>localStorage</em>. Du kan til enhver tid slette alle dine data ved at bruge knappen "Slet alle data permanent" i opsætningen.</p>
+
+          <h3 style="color: var(--navy); margin-top: 20px;">Betingelser for brug</h3>
+          <p>Ved brug af denne app accepterer du, at softwaren leveres "som den er". Udvikleren er ikke ansvarlig for tab af data, hvis browser-cachen slettes.</p>
+
+          <h3 style="color: var(--navy); margin-top: 20px;">Licens</h3>
+          <p>Denne software er licenseret til kommerciel brug. Distribution af kildekoden uden tilladelse er ikke tilladt.</p>
+        </div>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
